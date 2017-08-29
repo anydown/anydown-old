@@ -10,7 +10,6 @@
 </head>
 
 <body>
-  <button @click="compile">compile</button>
   <div id="editor">
     <textarea :value="input" @input="update"></textarea>
     <div id="output" v-html="compiledMarkdown"></div>
