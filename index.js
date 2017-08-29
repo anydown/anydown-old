@@ -2,9 +2,11 @@ Vue.component("cc-kanban", {
   props: ['text-data'],
   template: `<div class="kanban">
   <div class="kanban__col" v-for="col in kanbanData">
-    <div calss="kanban__col-title">{{col.name}}</div>
-    <div class="kanban__row" v-for="card in col.cards">
-      {{card.name}}
+    <div class="kanban__col-title">{{col.name}}</div>
+    <div class="kanban__wrapper">
+      <div class="kanban__row" v-for="card in col.cards">
+        {{card.name}}
+      </div>
     </div>
   </div>
   </div>`,
@@ -29,10 +31,17 @@ Vue.component("cc-kanban", {
           });
         }
       });
-      console.log(output)
       return output;
-
     }
+  },
+  ready: function(){
+    document.querySelectorAll(".kanban__wrapper").forEach((el)=>{
+      Sortable.create(el, {
+        group: "kanban-group",
+        animation: 100
+      });
+
+    })
   }
 })
 
@@ -44,6 +53,7 @@ var md = new markdownit({
     return str;
   }
 });
+
 new Vue({
   el: 'body',
   data: {
@@ -66,5 +76,6 @@ new Vue({
     Vue.nextTick(() => {
       this.$compile(document.querySelector("#output"));
     })
+
   }
 })
