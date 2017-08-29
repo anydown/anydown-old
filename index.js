@@ -36,6 +36,14 @@ Vue.component("cc-kanban", {
   }
 })
 
+var md = new markdownit({
+  highlight: function (str, lang) { 
+    if(lang && lang === "kanban"){
+      return `<pre-disable></pre-disable><cc-kanban text-data='${str}'></cc-kanban>`
+    }
+    return str;
+  }
+});
 new Vue({
   el: 'body',
   data: {
@@ -43,11 +51,7 @@ new Vue({
   },
   computed: {
     compiledMarkdown: function () {
-      var mark = marked(this.input, { sanitize: true })
-      var m = /<code class="lang-kanban">([^<]*?)<\/code>/g.exec(mark)[1]
-      mark = mark.replace(/<pre>/g, "")
-      mark = mark.replace(/<\/pre>/g, "")
-      return mark.replace(/<code class="lang-kanban">/g, "<cc-kanban text-data='" + m + "'>").replace(/<\/code>/g, "</cc-kanban>");
+      return md.render(this.input)
     }
   },
   methods: {
