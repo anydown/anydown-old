@@ -1,7 +1,7 @@
 Vue.component("cc-kanban", {
-  template: `<div class="kanban">!!!</div>`
+  props: ['text-data'],
+  template: `<div class="kanban">{{textData}}</div>`
 })
-
 
 new Vue({
   el: 'body',
@@ -11,7 +11,9 @@ new Vue({
   computed: {
     compiledMarkdown: function () {
       var mark = marked(this.input, { sanitize: true })
-      return mark.replace(/<code class="lang-kanban">/g, "<cc-kanban>").replace(/<\/code>/g, "</cc-kanban>");
+      var m = /<code class="lang-kanban">([^<]*?)<\/code>/g.exec(mark)[1]
+      console.log(m)
+      return mark.replace(/<code class="lang-kanban">/g, "<cc-kanban text-data='"+ m +"'>").replace(/<\/code>/g, "</cc-kanban>");
     }
   },
   methods: {
