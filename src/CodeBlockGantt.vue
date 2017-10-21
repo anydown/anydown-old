@@ -48,9 +48,7 @@
       scale: function(epoc){
         var start = getRelativeDate(this.displayRange[0]).getTime();
         var end = getRelativeDate(this.displayRange[1]).getTime();
-        var len = end - start;
-        var a = epoc - start;
-        var t = a / len * this.svgWidth;
+        var t = (epoc - start) / (end - start) * this.svgWidth;
         return Math.round(t);
       },
       generateLine: function(){
@@ -60,9 +58,7 @@
         var len = end - start;
         for(let i = 0; i < this.displayRangeLength; i++){
           var reldate = getRelativeDate(-2 + i)
-          var ab = reldate.getTime();
-          var a = ab - start;
-          var t = a / len * this.svgWidth;
+          var t = (reldate.getTime() - start) / len * this.svgWidth;
           let color = "#888888";
           if(reldate.getDay() === 0){
             color = "#FF8888";
