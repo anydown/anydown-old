@@ -9,7 +9,8 @@
 
 <script>
 import MarkdownBlock from './MarkdownBlock.vue'
-import CodeBlock from './CodeBlock.vue'
+import CodeBlockKanban from './CodeBlockKanban.vue'
+import CodeBlockGantt from './CodeBlockGantt.vue'
 
 export default {
   name: 'app',
@@ -28,9 +29,18 @@ export default {
     "input": function(){
       this.splited = this.input.split("```").map((block, index)=>{
         //必ず奇数indexがcode blockになる
+        let type = "markdown-block"
+        if(index % 2 === 1){
+          if(block.indexOf("kanban") === 0){
+            type = "code-block-kanban";
+          }
+          if(block.indexOf("gantt") === 0){
+            type = "code-block-gantt";
+          }
+        }
         return {
           text: block,
-          type: index % 2 === 0 ? "markdown-block" : "code-block",
+          type: type,
           id: index
         }
       });
@@ -43,11 +53,12 @@ export default {
     }
   },
   mounted: function(){
-    this.input = "# カンバンとmarkdownの交ぜ書き\n\n\n```kanban\n# TODO\n* タスク\n# DONE\n* test1\n* test2\n* test3\n```\n# hello";
+    this.input = "# カンバンとmarkdownの交ぜ書き\n\n\n```kanban\n# TODO\n* タスク\n# DONE\n* test1\n* test2\n* test3\n```\n# hello\n\n\n```gantt\nタスクA 2017-11-01 2017-11-02\nタスクB 2017-11-03 2017-11-05\nタスクC 2017-11-10 2017-11-15\n```\n";
   },
   components: {
     MarkdownBlock,
-    CodeBlock
+    CodeBlockKanban,
+    CodeBlockGantt
   }
 }
 </script>
