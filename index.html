@@ -1,24 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
-  <link rel="stylesheet" href="index.css">
-</head>
-
-<body>
-  <div id="editor">
-    <textarea :value="input" @input="update"></textarea>
-    <div id="output" v-html="compiledMarkdown"></div>
-  </div>
-  <script src="https://unpkg.com/sortablejs@1.4.2"></script>
-  <script src="https://unpkg.com/vue@1.0.28/dist/vue.js"></script>
-  <script src="https://cdn.jsdelivr.net/markdown-it/8.3.1/markdown-it.min.js"></script>
-  <script src="https://unpkg.com/lodash@4.17.4/lodash.min.js"></script>
-  <script src="index.js"></script>
-</body>
-
+  <head>
+    <meta charset="utf-8">
+    <title>study-markdown-code-block-custom</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="./dist/build.js"></script>
+  </body>
 </html>
