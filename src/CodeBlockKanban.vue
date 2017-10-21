@@ -63,20 +63,33 @@
 
   .kanban {
     display: flex;
+    margin: 0 -0.5rem;
   }
 
   .kanban__col {
     flex: 1;
-    border: 1px solid black;
     margin: 0.5rem;
     padding: 0.5rem;
-
+    background: #f5f5f5;
+    text-align: center;
+  }
+  .kanban__col-title{
+    font-size: 0.8rem;
+    font-weight: 900;
+    color: #888888;
   }
 
   .kanban__row {
-    margin: 0.5rem;
+    margin: 0.5rem 0;
     padding: 0.5rem;
-    border: 1px solid black;
+    text-align: left;
+    background: white;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    border-radius: 2px;
+    line-height: 1.6rem;
+    word-break:break-all;
+    
   }
 
   .kanban__wrapper {
