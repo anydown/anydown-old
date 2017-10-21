@@ -83,6 +83,10 @@ textarea,
   padding: 0 20px;
 }
 
+#output{
+  overflow-y: scroll;
+}
+
 textarea {
   border: none;
   border-right: 1px solid #ccc;
