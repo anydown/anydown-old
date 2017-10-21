@@ -1,7 +1,9 @@
 <template>
   <div id="editor">
-    <textarea v-model="input"></textarea>
-    <div id="output" v-html="compiledMarkdown"></div>
+    <textarea v-model="input" @change="update"></textarea>
+    <div id="output">
+      <div v-for="block in splited">{{block}}</div>
+    </div>
   </div>
 </template>
 
@@ -13,7 +15,8 @@ export default {
   name: 'app',
   data () {
     return {
-      input: "# カンバンとmarkdownの交ぜ書き\n\n\n```kanban\n# TODO\n* タスク\n# DONE\n* test1\n* test2\n* test3\n```\n# hello"
+      input: "",
+      splited: []
     }
   },
   computed: {
@@ -21,7 +24,23 @@ export default {
       return md.render(this.input)
     }
   },
+  watch: {
+    "input": function(){
+      this.splited = this.input.split("```").map((block, index)=>{
+        //必ず奇数indexがcode blockになる
+        return {
+          text: block,
+          type: index % 2 === 0 ? "md" : "code"
+        }
+      });
+    }
+  },
   methods: {
+    update: function(src){
+    }
+  },
+  mounted: function(){
+    this.input = "# カンバンとmarkdownの交ぜ書き\n\n\n```kanban\n# TODO\n* タスク\n# DONE\n* test1\n* test2\n* test3\n```\n# hello";
   }
 }
 </script>
