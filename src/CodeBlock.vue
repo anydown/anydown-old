@@ -1,10 +1,10 @@
 <template>
   <div class="kanban">
-    <div class="kanban__col" v-for="col in compiled">
+    <div class="kanban__col" v-for="(col, colIndex) in compiled">
       <div class="kanban__col-title">{{col.name}}</div>
       <div class="kanban__wrapper">
         <draggable v-model="col.cards" :options="{group:'everykanban'}" class="draggable--max" @change="onEnd">
-          <div class="kanban__row" v-for="(card, index) in col.cards" track-by="index">
+          <div class="kanban__row" v-for="(card, index) in col.cards" track-by="index" @dblclick="edit(colIndex, index)">
             {{card}}
           </div>
         </draggable>
@@ -45,6 +45,12 @@
     },
     methods: {
       onEnd: function(){
+        this.$emit("change", compiler.serializeKanban(this.compiled));
+      },
+      edit: function(col, row){
+        const oldData = this.compiled[col].cards[row]
+        var task = window.prompt("Input task name", oldData);
+        this.$set(this.compiled[col].cards, row, task)
         this.$emit("change", compiler.serializeKanban(this.compiled));
       }
     }
