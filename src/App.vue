@@ -84,26 +84,4 @@ textarea {
 code {
   color: #f66;
 }
-
-.kanban{
-  display: flex;
-}
-
-.kanban__col{
-  flex: 1;
-  border: 1px solid black;
-  margin: 0.5rem;
-  padding: 0.5rem;
-
-}
-
-.kanban__row{
-  margin: 0.5rem;
-  padding: 0.5rem;
-  border: 1px solid black;
-}
-
-.kanban__wrapper{
-  min-height: 20rem;
-}
 </style>
