@@ -1,8 +1,15 @@
 <template>
   <div id="editor">
-    <textarea v-model="input"></textarea>
+    <textarea id="input" v-model="input"></textarea>
     <div id="output">
-      <div :is="block.type" :input="block.text" v-for="block in splited" :key="block.id" @change="updateBlock($event, block.id)"></div>
+      <div class="output__header">
+          <div class="output__header__item" @click="loadExample">サンプル読込</div>
+          <div class="output__header__item">Dropboxから読込</div>
+          <div class="output__header__item">Dropboxに保存</div>
+      </div>
+      <div class="output__preview">
+          <div :is="block.type" :input="block.text" v-for="block in splited" :key="block.id" @change="updateBlock($event, block.id)"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -12,6 +19,8 @@ import MarkdownBlock from './MarkdownBlock.vue'
 import CodeBlockKanban from './CodeBlockKanban.vue'
 import CodeBlockGantt from './CodeBlockGantt.vue'
 import {example} from './example.js'
+
+const LOCALSTORAGE_KEY = "plainplan_data"
 
 export default {
   name: 'app',
@@ -28,6 +37,7 @@ export default {
   },
   watch: {
     "input": function(){
+      localStorage.setItem(LOCALSTORAGE_KEY, this.input);
       this.splited = this.input.split("```").map((block, index)=>{
         //必ず奇数indexがcode blockになる
         let type = "markdown-block"
@@ -51,10 +61,20 @@ export default {
     updateBlock: function(a, b){
       this.splited[b].text = a;
       this.input = this.splited.map(i => i.text).join("```")
+    },
+    loadExample: function(){
+      if(window.confirm("現在のノートを破棄しますが、よろしいですか？")){
+        this.input = example;
+      }
     }
   },
   mounted: function(){
-    this.input = example;
+    const storage = localStorage.getItem(LOCALSTORAGE_KEY);
+    if(storage){
+      this.input = storage;
+    }else{
+      this.input = example;
+    }
   },
   components: {
     MarkdownBlock,
@@ -74,17 +94,17 @@ body,
   color: #333;
 }
 
-textarea,
-#editor #output {
-  display: inline-block;
-  width: 49%;
+#editor{
+  display: flex;
+}
+
+textarea#input{
+  flex: 1;
   height: 100%;
-  vertical-align: top;
-  box-sizing: border-box;
-  padding: 0 20px;
 }
 
 #output{
+  flex: 1.5;
   overflow-y: scroll;
 }
 
@@ -97,6 +117,25 @@ textarea {
   font-size: 14px;
   font-family: 'Monaco', courier, monospace;
   padding: 20px;
+}
+.output__header{
+  height: 2.4rem;
+  line-height: 2.4rem;
+  background: #333;
+  color: white;
+  display: flex;
+  justify-content: flex-end;
+}
+.output__preview{
+  padding: 1rem;
+}
+.output__header__item{
+  font-size: 0.8rem;
+  padding: 0 1rem;
+  cursor: pointer;
+}
+.output__header__item:hover{
+  background: #111;
 }
 
 code {
