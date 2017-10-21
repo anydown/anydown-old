@@ -11,6 +11,7 @@
 import MarkdownBlock from './MarkdownBlock.vue'
 import CodeBlockKanban from './CodeBlockKanban.vue'
 import CodeBlockGantt from './CodeBlockGantt.vue'
+import {example} from './example.js'
 
 export default {
   name: 'app',
@@ -53,7 +54,7 @@ export default {
     }
   },
   mounted: function(){
-    this.input = "# カンバンとmarkdownの交ぜ書き\n\n\n```kanban\n# TODO\n* タスク\n# DONE\n* test1\n* test2\n* test3\n```\n# hello\n\n\n```gantt\nタスクA 2017-11-01 2017-11-02\nタスクB 2017-11-03 2017-11-05\nタスクC 2017-11-10 2017-11-15\n```\n";
+    this.input = example;
   },
   components: {
     MarkdownBlock,
