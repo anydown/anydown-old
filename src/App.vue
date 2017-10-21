@@ -2,14 +2,14 @@
   <div id="editor">
     <textarea v-model="input" @change="update"></textarea>
     <div id="output">
-      <div v-for="block in splited">{{block}}</div>
+      <div :is="block.type" :input="block.text" v-for="block in splited" :key="block.id"></div>
     </div>
   </div>
 </template>
 
 <script>
-import MarkdownIt from 'markdown-it';
-const md = new MarkdownIt();
+import MarkdownBlock from './MarkdownBlock.vue'
+import CodeBlock from './CodeBlock.vue'
 
 export default {
   name: 'app',
@@ -30,7 +30,8 @@ export default {
         //必ず奇数indexがcode blockになる
         return {
           text: block,
-          type: index % 2 === 0 ? "md" : "code"
+          type: index % 2 === 0 ? "markdown-block" : "code-block",
+          id: index
         }
       });
     }
@@ -41,6 +42,10 @@ export default {
   },
   mounted: function(){
     this.input = "# カンバンとmarkdownの交ぜ書き\n\n\n```kanban\n# TODO\n* タスク\n# DONE\n* test1\n* test2\n* test3\n```\n# hello";
+  },
+  components: {
+    MarkdownBlock,
+    CodeBlock
   }
 }
 </script>
