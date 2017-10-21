@@ -1,8 +1,8 @@
 <template>
   <div id="editor">
-    <textarea v-model="input" @change="update"></textarea>
+    <textarea v-model="input"></textarea>
     <div id="output">
-      <div :is="block.type" :input="block.text" v-for="block in splited" :key="block.id"></div>
+      <div :is="block.type" :input="block.text" v-for="block in splited" :key="block.id" @change="updateBlock($event, block.id)"></div>
     </div>
   </div>
 </template>
@@ -37,7 +37,9 @@ export default {
     }
   },
   methods: {
-    update: function(src){
+    updateBlock: function(a, b){
+      this.splited[b].text = a;
+      this.input = this.splited.map(i => i.text).join("```")
     }
   },
   mounted: function(){

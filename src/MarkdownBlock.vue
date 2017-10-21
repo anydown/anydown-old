@@ -1,7 +1,5 @@
 <template>
-  <div>
-    {{compiledMarkdown}}
-  </div>
+  <div v-html="compiledMarkdown"></div>
 </template>
 <script>
   import MarkdownIt from 'markdown-it';

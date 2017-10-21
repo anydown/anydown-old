@@ -3,7 +3,7 @@
     <div class="kanban__col" v-for="col in compiled">
       <div class="kanban__col-title">{{col.name}}</div>
       <div class="kanban__wrapper">
-        <draggable v-model="col.cards" :options="{group:'everykanban'}" class="draggable--max">
+        <draggable v-model="col.cards" :options="{group:'everykanban'}" class="draggable--max" @change="onEnd">
           <div class="kanban__row" v-for="(card, index) in col.cards" track-by="index">
             {{card}}
           </div>
@@ -15,26 +15,8 @@
 <script>
   import draggable from 'vuedraggable'
   import MarkdownIt from 'markdown-it';
+  import * as compiler from './kanban-compiler'
   const md = new MarkdownIt();
-
-  function compileKanban(input) {
-    var lines = input.split(/[\r|\n|\r\n]/);
-    var output = [];
-    var cards = [];
-    lines.forEach(function (line) {
-      if (line.trim().indexOf("#") === 0) {
-        cards = [];
-
-        output.push({
-          name: line.trim().replace("#", "").trim(),
-          cards: cards
-        });
-      } else if (line.trim().indexOf("*") === 0) {
-        cards.push(line.trim().replace("*", "").trim());
-      }
-    });
-    return output
-  }
 
   export default {
     props: {
@@ -47,14 +29,24 @@
     },
     watch: {
       "input": function () {
-        this.compiled = compileKanban(this.input)
+        this.compiled = compiler.compileKanban(this.input)
+      }
+    },
+    computed: {
+      output: function(){
+        this.compiled.join()
       }
     },
     components: {
       draggable
     },
     mounted: function () {
-      this.compiled = compileKanban(this.input)
+      this.compiled = compiler.compileKanban(this.input)
+    },
+    methods: {
+      onEnd: function(){
+        this.$emit("change", compiler.serializeKanban(this.compiled));
+      }
     }
   }
 </script>
