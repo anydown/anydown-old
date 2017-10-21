@@ -80,7 +80,7 @@
   }
 
   .kanban__wrapper {
-    min-height: 20rem;
+    min-height: 10rem;
     display: flex;
     flex-direction: column;
   }
