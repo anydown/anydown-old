@@ -1,10 +1,12 @@
 <template>
   <div class="kanban">
     <div class="kanban__col" v-for="(col, colIndex) in compiled">
-      <div class="kanban__col-title">{{col.name}}</div>
+      <div class="kanban__col__add" @click="addTask(colIndex)">+</div>
+      <div class="kanban__col-title" @dblclick="editTitle(colIndex)">{{col.name}}</div>
       <div class="kanban__wrapper">
         <draggable v-model="col.cards" :options="{group:'everykanban'}" class="draggable--max" @change="onEnd">
           <div class="kanban__row" v-for="(card, index) in col.cards" track-by="index" @dblclick="edit(colIndex, index)">
+            <div class="kanban__row__remove" @click="removeTask(colIndex, index)">×</div>
             {{card}}
           </div>
         </draggable>
@@ -49,9 +51,32 @@
       },
       edit: function(col, row){
         const oldData = this.compiled[col].cards[row]
-        var task = window.prompt("Input task name", oldData);
-        this.$set(this.compiled[col].cards, row, task)
-        this.$emit("change", compiler.serializeKanban(this.compiled));
+        var task = window.prompt("タスク名入力", oldData);
+        if(task){
+          this.$set(this.compiled[col].cards, row, task)
+          this.$emit("change", compiler.serializeKanban(this.compiled));
+        }
+      },
+      addTask: function(col){
+        var task = window.prompt("タスク名入力", "");
+        if(task){
+          this.compiled[col].cards.push(task)
+          this.$emit("change", compiler.serializeKanban(this.compiled));
+        }
+      },
+      removeTask: function(col, row){
+        const oldData = this.compiled[col].cards[row]
+        if(window.confirm("下記のタスクを削除してよろしいですか？：\n" + oldData)){
+          this.$delete(this.compiled[col].cards, row)
+          this.$emit("change", compiler.serializeKanban(this.compiled));
+        }
+      },
+      editTitle: function(col){
+        var listName = window.prompt("リスト名を変更", this.compiled[col].name);
+        if(listName){
+          this.compiled[col].name = listName
+          this.$emit("change", compiler.serializeKanban(this.compiled));
+        }
       }
     }
   }
@@ -72,11 +97,42 @@
     padding: 0.5rem;
     background: #f5f5f5;
     text-align: center;
+    position: relative;
   }
   .kanban__col-title{
     font-size: 0.8rem;
     font-weight: 900;
     color: #888888;
+    cursor: pointer;
+  }
+  .kanban__row:hover > .kanban__row__remove{
+    display: block;
+  }
+
+  .kanban__col__add{
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 2px;
+    color: #a5e487;
+    cursor: pointer;
+  }
+  .kanban__row__remove{
+    display: none;
+    position: absolute;
+    top: 8px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 2px;
+    color: #888888;
+    cursor: pointer;
+    text-align: center;
+    line-height: 20px;
   }
 
   .kanban__row {
@@ -89,7 +145,7 @@
     border-radius: 2px;
     line-height: 1.6rem;
     word-break:break-all;
-    
+    position: relative;
   }
 
   .kanban__wrapper {
