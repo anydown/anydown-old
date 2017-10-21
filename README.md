@@ -1,6 +1,12 @@
-# study-markdown-code-block-custom
+# PlainPlan
 
-> A Vue.js project
+- Markdownで書けるメモ帳
+- スケジュール機能が充実している
+  - カンバンやガントチャートを埋め込んで編集できる
+  - Trelloに上げるほどでもない、ちょっとした予定表なんかを一枚のMarkdownでまとめることができる
+- 単なるテキストなので、エクスポートやメール添付がかんたん
+- ローカルストレージに自動保存
+
 
 ## Build Setup
 
