@@ -4,8 +4,6 @@
     <div id="output">
       <div class="output__header">
           <div class="output__header__item" @click="loadExample">サンプル読込</div>
-          <div class="output__header__item">Dropboxから読込</div>
-          <div class="output__header__item">Dropboxに保存</div>
       </div>
       <div class="output__preview">
           <div :is="block.type" :input="block.text" v-for="block in splited" :key="block.id" @change="updateBlock($event, block.id)"></div>
@@ -98,7 +96,7 @@ body,
   display: flex;
 }
 
-textarea#input{
+#input{
   flex: 1;
   height: 100%;
 }
@@ -140,5 +138,17 @@ textarea {
 
 code {
   color: #f66;
+}
+
+@media print {
+  #input{
+    display: none;
+  }
+  #output{
+    overflow-y:visible;
+  }
+  .output__header{
+    display: none;
+  }
 }
 </style>
