@@ -1,4 +1,4 @@
-# PlainPlan
+# anydown
 
 - Markdownで書けるメモ帳
 - スケジュール機能が充実している

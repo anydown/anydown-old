@@ -1,4 +1,4 @@
-export const example = `# PlainPlan
+export const example = `# anydown
 
 ---
 

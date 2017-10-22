@@ -18,7 +18,7 @@ import CodeBlockKanban from './CodeBlockKanban.vue'
 import CodeBlockGantt from './CodeBlockGantt.vue'
 import {example} from './example.js'
 
-const LOCALSTORAGE_KEY = "plainplan_data"
+const LOCALSTORAGE_KEY = "anydown_data"
 
 export default {
   name: 'app',
