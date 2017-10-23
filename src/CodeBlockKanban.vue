@@ -30,50 +30,50 @@
       }
     },
     watch: {
-      "input": function () {
+      input() {
         this.compiled = compiler.compileKanban(this.input)
       }
     },
     computed: {
-      output: function(){
+      output() {
         this.compiled.join()
       }
     },
     components: {
       draggable
     },
-    mounted: function () {
+    mounted() {
       this.compiled = compiler.compileKanban(this.input)
     },
     methods: {
-      onEnd: function(){
+      onEnd() {
         this.$emit("change", compiler.serializeKanban(this.compiled));
       },
-      edit: function(col, row){
+      edit(col, row) {
         const oldData = this.compiled[col].cards[row]
         var task = window.prompt("タスク名入力", oldData);
-        if(task){
+        if (task) {
           this.$set(this.compiled[col].cards, row, task)
           this.$emit("change", compiler.serializeKanban(this.compiled));
         }
       },
-      addTask: function(col){
+      addTask(col) {
         var task = window.prompt("タスク名入力", "");
-        if(task){
+        if (task) {
           this.compiled[col].cards.push(task)
           this.$emit("change", compiler.serializeKanban(this.compiled));
         }
       },
-      removeTask: function(col, row){
+      removeTask(col, row) {
         const oldData = this.compiled[col].cards[row]
-        if(window.confirm("下記のタスクを削除してよろしいですか？：\n" + oldData)){
+        if (window.confirm("下記のタスクを削除してよろしいですか？：\n" + oldData)) {
           this.$delete(this.compiled[col].cards, row)
           this.$emit("change", compiler.serializeKanban(this.compiled));
         }
       },
-      editTitle: function(col){
+      editTitle(col) {
         var listName = window.prompt("リスト名を変更", this.compiled[col].name);
-        if(listName){
+        if (listName) {
           this.compiled[col].name = listName
           this.$emit("change", compiler.serializeKanban(this.compiled));
         }
@@ -99,17 +99,19 @@
     text-align: center;
     position: relative;
   }
-  .kanban__col-title{
+
+  .kanban__col-title {
     font-size: 0.8rem;
     font-weight: 900;
     color: #888888;
     cursor: pointer;
   }
-  .kanban__row:hover > .kanban__row__remove{
+
+  .kanban__row:hover>.kanban__row__remove {
     display: block;
   }
 
-  .kanban__col__add{
+  .kanban__col__add {
     position: absolute;
     top: 6px;
     right: 8px;
@@ -120,7 +122,8 @@
     color: #a5e487;
     cursor: pointer;
   }
-  .kanban__row__remove{
+
+  .kanban__row__remove {
     display: none;
     position: absolute;
     top: 8px;
@@ -144,7 +147,7 @@
     cursor: pointer;
     border-radius: 2px;
     line-height: 1.6rem;
-    word-break:break-all;
+    word-break: break-all;
     position: relative;
   }
 
