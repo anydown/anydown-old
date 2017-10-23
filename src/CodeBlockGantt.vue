@@ -1,32 +1,38 @@
 <template>
-  <svg width="600" :height="tasks.length * 32 + 32">
+  <svg :width="svgWidth" :height="tasks.length * 32 + 32">
+    <!-- 全体を32px下げる（日付用余白） -->
     <g transform="translate(0, 32)">
-        <rect class="background" x="0" y="0"  width="600" :height="tasks.length * 32"></rect>
-        <text v-for="line in lines" :x="line.x + 12" y="-8" text-anchor="middle" font-size="0.8rem" :fill="line.color">{{line.label}}</text>
-        <line v-for="line in lines" :x1="line.x" y1="0" :x2="line.x" :y2="tasks.length * 32" style="stroke:rgb(253, 253, 253);stroke-width:2" />
-        <g v-for="(task, index) in tasks" :transform="'translate(' + scale(task.start) + ',' + index * 32 + ')'">
-          <rect class="task" x="0" y="4" :width="scaleLength(task.end - task.start)" height="24"></rect>
-          <text x="-10" y="20" font-size="12" text-anchor="end" fill="black" line-height="32" >{{task.name}}</text>
-        </g>
+      <!-- 背景 -->
+      <rect class="background" x="0" y="0" :width="svgWidth" :height="tasks.length * 32"></rect>
+      <!-- 日付 -->
+      <text v-for="line in lines" :x="line.x + 12" y="-8" text-anchor="middle" font-size="0.8rem" :fill="line.color">{{line.label}}</text>
+      <!-- 日付区切り線 -->
+      <line v-for="line in lines" :x1="line.x" y1="0" :x2="line.x" :y2="tasks.length * 32" class="gridline" 　/>
+      <!-- タスク -->
+      <g v-for="(task, index) in tasks" :transform="'translate(' + scale(task.start) + ',' + index * 32 + ')'">
+        <rect class="task" x="0" y="4" :width="scaleLength(task.end - task.start)" height="24"></rect>
+        <text x="-4" y="20" font-size="12" text-anchor="end" fill="black" line-height="32">{{task.name}}</text>
+      </g>
     </g>
   </svg>
 </template>
 <script>
-  function getRelativeDate(day){
-    var d = new Date();
+  function resetHMS(d) {
     d.setHours(0);
     d.setMinutes(0)
     d.setSeconds(0);
     d.setMilliseconds(0)
+    return d;
+  }
+  function getRelativeDate(day) {
+    var d = new Date();
+    resetHMS(d)
     d.setDate(d.getDate() + day)
     return d
   }
-  function getNewDate(str){
+  function getNewDate(str) {
     var d = new Date(str);
-    d.setHours(0);
-    d.setMinutes(0)
-    d.setSeconds(0);
-    d.setMilliseconds(0)
+    resetHMS(d)
     return d;
   }
 
@@ -37,45 +43,48 @@
     data() {
       return {
         lines: [],
-        displayRange: [-2, 24],
+        displayRange: {
+          start: -2,
+          end: 24
+        },
         svgWidth: 600
       }
     },
     methods: {
-      scaleLength: function(epocdiff){
+      scaleLength(epocdiff) {
         return epocdiff / (24 * 60 * 60 * 1000) * this.svgWidth / this.displayRangeLength
       },
-      scale: function(epoc){
-        var start = getRelativeDate(this.displayRange[0]).getTime();
-        var end = getRelativeDate(this.displayRange[1]).getTime();
+      scale(epoc) {
+        var start = getRelativeDate(this.displayRange.start).getTime();
+        var end = getRelativeDate(this.displayRange.end).getTime();
         var t = (epoc - start) / (end - start) * this.svgWidth;
         return Math.round(t);
       },
-      generateLine: function(){
+      generateLine() {
         var lines = []
-        var start = getRelativeDate(this.displayRange[0]).getTime();
-        var end = getRelativeDate(this.displayRange[1]).getTime();
+        var start = getRelativeDate(this.displayRange.start).getTime();
+        var end = getRelativeDate(this.displayRange.end).getTime();
         var len = end - start;
-        for(let i = 0; i < this.displayRangeLength; i++){
-          var reldate = getRelativeDate(-2 + i)
+        for (let i = 0; i < this.displayRangeLength; i++) {
+          var reldate = getRelativeDate(this.displayRange.start + i)
           var t = (reldate.getTime() - start) / len * this.svgWidth;
           let color = "#888888";
-          if(reldate.getDay() === 0){
+          if (reldate.getDay() === 0) {
             color = "#FF8888";
           }
-          if(reldate.getDay() === 6){
+          if (reldate.getDay() === 6) {
             color = "#8888FF";
           }
-          lines.push({x: Math.round(t), label: reldate.getDate(), color: color})
+          lines.push({ x: Math.round(t), label: reldate.getDate(), color: color })
         }
         this.lines = lines;
       }
     },
     computed: {
-      displayRangeLength: function(){
-        return (this.displayRange[1] - this.displayRange[0]);
+      displayRangeLength() {
+        return (this.displayRange.end - this.displayRange.start);
       },
-      tasks: function () {
+      tasks() {
         var data = this.input.split("\n").filter(item => item.length > 0);
         //最初の一行を除去
         data.shift();
@@ -89,16 +98,22 @@
         })
       }
     },
-    mounted: function(){
+    mounted() {
       this.generateLine();
     }
   }
 </script>
 <style>
-.task{
-  fill:rgb(144, 144, 255);
-}
-.background{
-  fill: #f5f5f5;
-}
+  .task {
+    fill: rgb(144, 144, 255);
+  }
+
+  .background {
+    fill: #f5f5f5;
+  }
+
+  .gridline {
+    stroke: rgb(253, 253, 253);
+    stroke-width: 2
+  }
 </style>
