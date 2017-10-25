@@ -51,14 +51,14 @@
       },
       edit(col, row) {
         const oldData = this.compiled[col].cards[row]
-        var task = window.prompt("タスク名入力", oldData);
+        const task = window.prompt("タスク名入力", oldData);
         if (task) {
           this.$set(this.compiled[col].cards, row, task)
           this.$emit("change", compiler.serializeKanban(this.compiled));
         }
       },
       addTask(col) {
-        var task = window.prompt("タスク名入力", "");
+        const task = window.prompt("タスク名入力", "");
         if (task) {
           this.compiled[col].cards.push(task)
           this.$emit("change", compiler.serializeKanban(this.compiled));
@@ -72,7 +72,7 @@
         }
       },
       editTitle(col) {
-        var listName = window.prompt("リスト名を変更", this.compiled[col].name);
+        const listName = window.prompt("リスト名を変更", this.compiled[col].name);
         if (listName) {
           this.compiled[col].name = listName
           this.$emit("change", compiler.serializeKanban(this.compiled));

@@ -25,16 +25,17 @@
     return d;
   }
   function getRelativeDate(day) {
-    var d = new Date();
+    let d = new Date();
     resetHMS(d)
     d.setDate(d.getDate() + day)
     return d
   }
   function getNewDate(str) {
-    var d = new Date(str);
+    let d = new Date(str);
     resetHMS(d)
     return d;
   }
+  var scale = require("d3-scale")
 
   export default {
     props: {
@@ -55,19 +56,16 @@
         return epocdiff / (24 * 60 * 60 * 1000) * this.svgWidth / this.displayRangeLength
       },
       scale(epoc) {
-        var start = getRelativeDate(this.displayRange.start).getTime();
-        var end = getRelativeDate(this.displayRange.end).getTime();
-        var t = (epoc - start) / (end - start) * this.svgWidth;
-        return Math.round(t);
+        return scale.scaleLinear().domain(this.timeRange).range([0, this.svgWidth])(epoc)
       },
       generateLine() {
-        var lines = []
-        var start = getRelativeDate(this.displayRange.start).getTime();
-        var end = getRelativeDate(this.displayRange.end).getTime();
-        var len = end - start;
+        let lines = []
+        const start = this.timeRange[0];
+        const end = this.timeRange[1];
+        const len = end - start;
         for (let i = 0; i < this.displayRangeLength; i++) {
-          var reldate = getRelativeDate(this.displayRange.start + i)
-          var t = (reldate.getTime() - start) / len * this.svgWidth;
+          const reldate = getRelativeDate(this.displayRange.start + i)
+          const t = (reldate.getTime() - start) / len * this.svgWidth;
           let color = "#888888";
           if (reldate.getDay() === 0) {
             color = "#FF8888";
@@ -81,15 +79,21 @@
       }
     },
     computed: {
+      timeRange() {
+        return [
+          getRelativeDate(this.displayRange.start).getTime(),
+          getRelativeDate(this.displayRange.end).getTime()
+        ]
+      },
       displayRangeLength() {
         return (this.displayRange.end - this.displayRange.start);
       },
       tasks() {
-        var data = this.input.split("\n").filter(item => item.length > 0);
+        let data = this.input.split("\n").filter(item => item.length > 0);
         //最初の一行を除去
         data.shift();
         return data.map((item) => {
-          var ary = item.split(" ");
+          const ary = item.split(" ");
           return {
             name: ary[0],
             start: getNewDate(ary[1]).getTime(),
