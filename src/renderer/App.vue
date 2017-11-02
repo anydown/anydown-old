@@ -2,12 +2,7 @@
   <div id="editor">
     <textarea id="input" v-model="input"></textarea>
     <div id="output">
-      <div class="output__header">
-          <div class="output__header__item" @click="loadExample">サンプル読込</div>
-      </div>
-      <div class="output__preview">
-          <div :is="block.type" :input="block.text" v-for="block in splited" :key="block.id" @change="updateBlock($event, block.id)"></div>
-      </div>
+      <div :is="block.type" :input="block.text" v-for="block in splited" :key="block.id" @change="updateBlock($event, block.id)"></div>
     </div>
   </div>
 </template>
@@ -94,6 +89,7 @@ body,
 
 #editor{
   display: flex;
+  overflow-y: hidden;
 }
 
 #input{
@@ -104,6 +100,7 @@ body,
 #output{
   flex: 1.5;
   overflow-y: scroll;
+  padding: 1rem;
 }
 
 textarea {

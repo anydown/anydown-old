@@ -1,5 +1,5 @@
 import test from 'ava';
-import * as compiler from './src/kanban-compiler';
+import * as compiler from './src/renderer/kanban-compiler';
 
 
 test(t => {
