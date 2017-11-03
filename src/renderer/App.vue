@@ -1,6 +1,10 @@
 <template>
   <div id="editor">
-    <textarea id="input" v-model="input"></textarea>
+    <div id="input">
+      <codemirror v-model="input" :options="codeMirrorOption"></codemirror>
+    </div>
+    
+    <!--<textarea id="input" v-model="input"></textarea>-->
     <div id="output">
       <div :is="block.type" :input="block.text" v-for="block in splited" :key="block.id" @change="updateBlock($event, block.id)"></div>
     </div>
@@ -11,10 +15,15 @@
 import MarkdownBlock from "./MarkdownBlock.vue";
 import CodeBlockKanban from "./CodeBlockKanban.vue";
 import CodeBlockGantt from "./CodeBlockGantt.vue";
+import { codemirror } from "vue-codemirror-lite";
 import { example } from "./example.js";
 import menu from "./menu";
 const LOCALSTORAGE_KEY = "anydown_data";
 const LOCALSTORAGE_LAST_EDITED_FILE = "anydown_last_edited_file";
+require("codemirror/mode/markdown/markdown");
+require("codemirror/addon/edit/continuelist.js");
+
+import "codemirror/theme/monokai.css";
 
 const filters = [
   {
@@ -29,7 +38,14 @@ export default {
     return {
       input: "",
       splited: [],
-      path: ""
+      path: "",
+      codeMirrorOption: {
+        mode: "markdown",
+        extraKeys: { Enter: "newlineAndIndentContinueMarkdownList" },
+        lineNumbers: true,
+        theme: "monokai",
+        lineWrapping: true
+      }
     };
   },
   computed: {
@@ -170,7 +186,8 @@ export default {
   components: {
     MarkdownBlock,
     CodeBlockKanban,
-    CodeBlockGantt
+    CodeBlockGantt,
+    codemirror
   }
 };
 </script>
@@ -199,6 +216,10 @@ body,
   flex: 1.5;
   overflow-y: scroll;
   padding: 1rem;
+}
+
+.CodeMirror {
+  height: 100%;
 }
 
 textarea {
