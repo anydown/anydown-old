@@ -4,6 +4,8 @@
 <script>
   import MarkdownIt from 'markdown-it';
   const md = new MarkdownIt();
+  import * as emoji from 'markdown-it-emoji';
+  md.use(emoji)
 
   export default {
     props: {
