@@ -14,4 +14,3 @@ document.ondragover = document.ondrop = function(e) {
   e.preventDefault(); // イベントの伝搬を止めて、アプリケーションのHTMLとファイルが差し替わらないようにする
   return false;
 };
-window.dra
