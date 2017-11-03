@@ -177,11 +177,13 @@ export default {
       this.readFile(lastEditedFile);
     }
 
-    menu.openFile = this.menuOpenFile;
-    menu.newFile = this.menuNewFile;
-    menu.saveFile = this.menuSaveFile;
-    menu.saveAsFile = this.menuSaveAs;
-    menu.ready();
+    if(this.$electron){
+      menu.openFile = this.menuOpenFile;
+      menu.newFile = this.menuNewFile;
+      menu.saveFile = this.menuSaveFile;
+      menu.saveAsFile = this.menuSaveAs;
+      menu.ready(this.$electron);
+    }
   },
   components: {
     MarkdownBlock,
@@ -219,7 +221,7 @@ body,
 }
 
 .CodeMirror {
-  height: 100%;
+  height: 100% !important;
 }
 
 textarea {

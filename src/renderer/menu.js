@@ -1,13 +1,17 @@
-import { remote } from "electron"
-const { Menu } = remote.require("electron")
-
 export default {
   menubar: [],
   newFile() { },
   openFile() { },
   saveFile() { },
   saveAsFile() { },
-  ready() {
+  ready($electron) {
+    let remote
+    let Menu
+    if($electron){
+      remote = $electron.remote
+      Menu = remote.Menu;
+    }
+
     var self = this;
     this.menubar.push({
       label: "ファイル",
