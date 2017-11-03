@@ -5,11 +5,11 @@
       <!-- 背景 -->
       <rect class="background" x="0" y="0" :width="svgWidth" :height="tasks.length * 32"></rect>
       <!-- 日付 -->
-      <text v-for="line in lines" :x="line.x + 12" y="-8" text-anchor="middle" font-size="0.8rem" :fill="line.color">{{line.label}}</text>
+      <text v-for="(line, index) in lines" :x="line.x + 12" y="-8" text-anchor="middle" font-size="0.8rem" :fill="line.color" :key="index">{{line.label}}</text>
       <!-- 日付区切り線 -->
-      <line v-for="line in lines" :x1="line.x" y1="0" :x2="line.x" :y2="tasks.length * 32" class="gridline" 　/>
+      <line v-for="(line, index) in lines" :x1="line.x" y1="0" :x2="line.x" :y2="tasks.length * 32" class="gridline" :key="index" />
       <!-- タスク -->
-      <g v-for="(task, index) in tasks" :transform="'translate(' + scale(task.start) + ',' + index * 32 + ')'">
+      <g v-for="(task, index) in tasks" :transform="`translate(${scale(task.start)}, ${index * 32})`" :key="index" >
         <rect class="task" x="0" y="4" :width="scaleLength(task.end - task.start)" height="24"></rect>
         <text x="-4" y="20" font-size="12" text-anchor="end" fill="black" line-height="32">{{task.name}}</text>
       </g>
