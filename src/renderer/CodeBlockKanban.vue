@@ -1,11 +1,11 @@
 <template>
   <div class="kanban">
-    <div class="kanban__col" v-for="(col, colIndex) in compiled">
+    <div class="kanban__col" v-for="(col, colIndex) in compiled" :key="colIndex">
       <div class="kanban__col__add" @click="addTask(colIndex)">+</div>
       <div class="kanban__col-title" @dblclick="editTitle(colIndex)">{{col.name}}</div>
       <div class="kanban__wrapper">
         <draggable v-model="col.cards" :options="{group:'everykanban'}" class="draggable--max" @change="onEnd">
-          <div class="kanban__row" v-for="(card, index) in col.cards" track-by="index" @dblclick="edit(colIndex, index)">
+          <div class="kanban__row" v-for="(card, index) in col.cards" track-by="index" :key="index" @dblclick="edit(colIndex, index)">
             <div class="kanban__row__remove" @click="removeTask(colIndex, index)">×</div>
             {{card}}
           </div>

@@ -10,3 +10,12 @@ yarn-error.log
 *.ntvs*
 *.njsproj
 *.sln
+
+dist/electron/*
+dist/web/*
+build/*
+!build/icons
+npm-debug.log.*
+thumbs.db
+!.gitkeep
+
