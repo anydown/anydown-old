@@ -1,14 +1,16 @@
 <template>
-  <div id="editor">
-    <div id="input">
-      <codemirror v-model="input" :options="codeMirrorOption"></codemirror>
-    </div>
-    
-    <!--<textarea id="input" v-model="input"></textarea>-->
-    <div id="output">
-      <div :is="block.type" :input="block.text" v-for="block in splited" :key="block.id" @change="updateBlock($event, block.id)"></div>
-    </div>
-  </div>
+    <vue-split-pane :min-percent='20' :default-percent='40' split="vertical">
+      <template slot="paneL">
+        <codemirror id="input" v-model="input" :options="codeMirrorOption"></codemirror>
+      </template>
+      <template slot="paneR">
+        <div id="output">
+          <div class="markdown-body">
+            <div :is="block.type" :input="block.text" v-for="block in splited" :key="block.id" @change="updateBlock($event, block.id)"></div>
+          </div>
+        </div>
+      </template>
+    </vue-split-pane>
 </template>
 
 <script>
@@ -22,8 +24,8 @@ const LOCALSTORAGE_KEY = "anydown_data";
 const LOCALSTORAGE_LAST_EDITED_FILE = "anydown_last_edited_file";
 require("codemirror/mode/markdown/markdown");
 require("codemirror/addon/edit/continuelist.js");
-
 import "codemirror/theme/monokai.css";
+import VueSplitPane from "vue-splitpane";
 
 const filters = [
   {
@@ -177,7 +179,7 @@ export default {
       this.readFile(lastEditedFile);
     }
 
-    if(this.$electron){
+    if (this.$electron) {
       menu.openFile = this.menuOpenFile;
       menu.newFile = this.menuNewFile;
       menu.saveFile = this.menuSaveFile;
@@ -189,7 +191,8 @@ export default {
     MarkdownBlock,
     CodeBlockKanban,
     CodeBlockGantt,
-    codemirror
+    codemirror,
+    VueSplitPane
   }
 };
 </script>
@@ -215,9 +218,9 @@ body,
 }
 
 #output {
-  flex: 1.5;
+  height: 100%;
+  display: flex;
   overflow-y: scroll;
-  padding: 1rem;
 }
 
 .CodeMirror {
@@ -256,6 +259,11 @@ textarea {
 
 code {
   color: #f66;
+}
+
+.markdown-body {
+  padding: 1rem;
+  flex: 1;
 }
 
 @media print {
