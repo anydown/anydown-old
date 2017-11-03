@@ -1,4 +1,5 @@
 <template>
+  <div class="app">
     <vue-split-pane :min-percent='20' :default-percent='40' split="vertical">
       <template slot="paneL">
         <codemirror id="input" v-model="input" :options="codeMirrorOption"></codemirror>
@@ -11,6 +12,8 @@
         </div>
       </template>
     </vue-split-pane>
+    <div class="droppable" :class="{'dropover': dropover}" @drop.stop.prevent="ondrop" @dragleave="ondragleave"></div>
+  </div>
 </template>
 
 <script>
@@ -41,6 +44,7 @@ export default {
       input: "",
       splited: [],
       path: "",
+      dropover: false,
       codeMirrorOption: {
         mode: "markdown",
         extraKeys: { Enter: "newlineAndIndentContinueMarkdownList" },
@@ -163,6 +167,16 @@ export default {
           }
         }
       );
+    },
+    ondragenter(){
+      this.dropover = true;
+    },
+    ondrop(e){
+      this.readFile(e.dataTransfer.files[0].path)
+      this.dropover = false;
+    },
+    ondragleave(){
+      this.dropover = false;
     }
   },
   mounted() {
@@ -186,6 +200,8 @@ export default {
       menu.saveAsFile = this.menuSaveAs;
       menu.ready(this.$electron);
     }
+
+    window.addEventListener("dragenter", this.ondragenter)
   },
   components: {
     MarkdownBlock,
@@ -276,5 +292,25 @@ code {
   .output__header {
     display: none;
   }
+}
+
+.app{
+  height: 100%;
+}
+
+.droppable{
+  background: black;
+  opacity: 0;
+  position: fixed;
+  top:0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  user-select: none;
+  z-index: -100;
+}
+.droppable.dropover{
+  opacity: 0.5;
+  z-index: 1000;
 }
 </style>
