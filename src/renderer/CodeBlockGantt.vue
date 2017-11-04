@@ -15,6 +15,7 @@
         <rect class="task" x="0" y="4" :width="scaleLength(task.end - task.start)" height="24" @pointerdown="startDrag($event, index)"></rect>
         <text class="taskname" x="-4" y="20" font-size="12" text-anchor="end" fill="black" line-height="32">{{task.name}}</text>
       </g>
+      <rect v-if="dragoverIndex > -1 && dragoverIndex !== selectedIndex" class="dragover" x="0" :y="32 * dragoverIndex" :width="svgWidth" height="32"></rect>
     </g>
   </svg>
 </template>
@@ -63,7 +64,8 @@
           x: 0,
           y: 0
         },
-        dragging: ""
+        dragging: "none",
+        dragoverIndex: -1
       }
     },
     methods: {
@@ -73,6 +75,8 @@
           //差分値を基点に反映
           this.selectedItem.start = this.invert(e.offsetX - this.dragOffset.x)
           this.selectedItem.end = this.selectedItem.start + len
+
+          this.dragoverIndex = Math.floor((e.offsetY - 48)/32)
         }
         if(this.dragging === "resize-x"){
           this.selectedItem.end = this.invert(e.offsetX)
@@ -83,6 +87,7 @@
         this.selectedIndex = index
         //ページ左上とオブジェクト左上の差分から、ドラッグ開始位置（オブジェクト相対座標）を取得
         this.dragOffset.x = e.offsetX - this.scale(this.selectedItem.start)
+        this.dragOffset.y = e.offsetY - index * 32 - 48
 
         const len = this.selectedItem.end - this.selectedItem.start
         if (e.offsetX > this.scale(this.selectedItem.end) - 10) {
@@ -91,11 +96,18 @@
       },      
       stopDrag() {
         if (this.dragging !== "none") {
-          this.dragging = "none"
           this.selectedItem.start = roundHMSfromEpoc(this.selectedItem.start)
           this.selectedItem.end = roundHMSfromEpoc(this.selectedItem.end)
-          this.selectedIndex = -1;
         }
+        if (this.dragging === "move") {
+          if(this.selectedIndex !== this.dragoverIndex){
+            const task = this.tasks.splice(this.selectedIndex, 1)
+            this.tasks.splice(this.dragoverIndex, 0, task[0])
+          }
+        }
+        this.dragging = "none"
+        this.selectedIndex = -1;
+        this.dragoverIndex = -1;
       },
       scaleLength(epocdiff) {
         return epocdiff / (24 * 60 * 60 * 1000) * this.svgWidth / this.displayRangeLength
@@ -181,6 +193,7 @@
     stroke-width: 2
   }
   svg.gantt{
+    cursor: default;
     user-select: none;
   }
   .taskname{
@@ -188,5 +201,8 @@
   }
   .dragging{
     opacity: 0.5;
+  }
+  .dragover{
+    opacity: 0.1;
   }
 </style>
