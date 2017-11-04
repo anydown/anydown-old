@@ -8,8 +8,8 @@ function compile(input){
     const ary = item.split(" ");
     return {
       name: ary[0],
-      start: util.getNewDate(ary[1]).getTime(),
-      end: util.getNewDate(ary[2]).getTime()
+      start: util.getNewDate(ary[1], 0).getTime(),
+      end: util.getNewDate(ary[2], 1).getTime()
     }
   })
 }
@@ -20,13 +20,17 @@ function zeropad(str) {
 function ymd(d){
   return `${d.getFullYear()}-${zeropad(d.getMonth() + 1)}-${zeropad(d.getDate())}`
 }
-function ymdFromEpoc(epoc){
-  return ymd(new Date(epoc))
+function ymdFromEpoc(epoc, offset){
+  let d = new Date(epoc)
+  if(offset !== undefined){
+    d.setDate(d.getDate() + offset)
+  }
+  return ymd(d)
 }
 
 function serialize(tasks){
   return "gantt\n" + tasks.map((item)=>{
-    return `${item.name} ${ymdFromEpoc(item.start)} ${ymdFromEpoc(item.end)}`
+    return `${item.name} ${ymdFromEpoc(item.start)} ${ymdFromEpoc(item.end, -1)}`
   }).join("\n") + "\n"
 }
 

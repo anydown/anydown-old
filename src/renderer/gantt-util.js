@@ -17,9 +17,12 @@ function getRelativeDate(day) {
   d.setDate(d.getDate() + day)
   return d
 }
-function getNewDate(str) {
+function getNewDate(str, offset) {
   let d = new Date(str);
   resetHMS(d)
+  if(offset !== undefined){
+    d.setDate(d.getDate() + offset)
+  }
   return d;
 }
 
