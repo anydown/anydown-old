@@ -1,7 +1,7 @@
 import test from 'ava';
-import * as kanban from './src/renderer/kanban-compiler';
-import * as gantt from './src/renderer/gantt-compiler';
-
+import * as kanban from './src/renderer/components/kanban-compiler';
+import * as gantt from './src/renderer/components/gantt-compiler';
+import * as documentCompiler from './src/renderer/util/document-compiler'
 
 test(t => {
 	const kanbanInput = "kanban\n# TODO\n* タスク\n# DONE\n* test1\n* test2\n* test3\n"
@@ -43,4 +43,19 @@ test(t => {
 	const str = gantt.serialize(tasks)
 	const expected = "gantt\nTask1 2017-11-04 2017-11-06\nTask2 2017-11-05 2017-11-07\n"
 	t.deepEqual(str, expected)
+})
+
+
+test(t => {
+	const pageStr = "#hoge\n```kanban\n\n```\n##fuga\n```gantt\n\n```\n"
+	var doc = documentCompiler.compile(pageStr)
+	const expected = [
+		{id: 0, text: "#hoge\n", type: "markdown-block"},
+		{id: 1, text: "kanban\n\n", type: "code-block-kanban"},
+		{id: 2, text: "\n##fuga\n", type: "markdown-block"},
+		{id: 3, text: "gantt\n\n", type: "code-block-gantt"},
+		{id: 4, text: "\n", type: "markdown-block"}
+	];
+	t.deepEqual(doc, expected);
+	
 })

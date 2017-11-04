@@ -21,6 +21,7 @@ import CodeBlockKanban from "./components/CodeBlockKanban.vue";
 import CodeBlockGantt from "./components/CodeBlockGantt.vue";
 import { example } from "./util/example.js";
 import menu from "./util/menu";
+import {compile} from "./util/document-compiler"
 
 import { codemirror } from "vue-codemirror-lite";
 import VueSplitPane from "vue-splitpane";
@@ -65,7 +66,6 @@ export default {
       return this.input !== this.originalInput;
     },
     editor() {
-      // get current editor object
       return this.$refs.codemirror.editor;
     }
   },
@@ -73,23 +73,7 @@ export default {
     input() {
       this.checkDirty();
       localStorage.setItem(LOCALSTORAGE_KEY, this.input);
-      this.splited = this.input.split("```").map((block, index) => {
-        //必ず奇数indexがcode blockになる
-        let type = "markdown-block";
-        if (index % 2 === 1) {
-          if (block.indexOf("kanban") === 0) {
-            type = "code-block-kanban";
-          }
-          if (block.indexOf("gantt") === 0) {
-            type = "code-block-gantt";
-          }
-        }
-        return {
-          text: block,
-          type: type,
-          id: index
-        };
-      });
+      this.splited = compile(this.input);
     }
   },
   methods: {
