@@ -1,3 +1,33 @@
+//Examples
+
+const kanbanExample = `\`\`\`kanban
+# TODO
+* Task 1
+* Task 2
+* Task 3
+# DOING
+# DONE
+\`\`\`
+`
+
+function zeropad(str) {
+  return ("00" + str).slice(-2)
+}
+
+const d = new Date();
+const exampleTask1 = `${d.getFullYear()}-${zeropad(d.getMonth() + 1)}-${zeropad(d.getDate())}`
+d.setDate(d.getDate() + 3);
+const exampleTask2 = `${d.getFullYear()}-${zeropad(d.getMonth() + 1)}-${zeropad(d.getDate())}`
+d.setDate(d.getDate() + 3);
+const exampleTask3 = `${d.getFullYear()}-${zeropad(d.getMonth() + 1)}-${zeropad(d.getDate())}`
+
+const ganttExample = `\`\`\`gantt
+Task1 ${exampleTask1} ${exampleTask2}
+Task2 ${exampleTask2} ${exampleTask3}
+\`\`\`
+`
+
+
 export default {
   menubar: [],
   newFile() { },
@@ -7,7 +37,7 @@ export default {
   ready($electron) {
     let remote
     let Menu
-    if($electron){
+    if ($electron) {
       remote = $electron.remote
       Menu = remote.Menu;
     }
@@ -45,7 +75,23 @@ export default {
           }
         },
       ],
-    },
+    }, {
+        label: "挿入",
+        submenu: [
+          {
+            label: "カンバン",
+            click() {
+              self.insert(kanbanExample)
+            }
+          },
+          {
+            label: "ガントチャート",
+            click() {
+              self.insert(ganttExample)
+            }
+          },
+        ],
+      },
       {
         label: "ヘルプ",
         submenu: [

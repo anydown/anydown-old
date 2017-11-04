@@ -2,7 +2,7 @@
   <div class="app" @drop="ondrop">
     <vue-split-pane :min-percent='20' :default-percent='40' split="vertical">
       <template slot="paneL">
-        <codemirror id="input" v-model="input" :options="codeMirrorOption"></codemirror>
+        <codemirror ref="codemirror" id="input" v-model="input" :options="codeMirrorOption"></codemirror>
       </template>
       <template slot="paneR">
         <div id="output">
@@ -60,7 +60,11 @@ export default {
     },
     isDirty() {
       return this.input !== this.originalInput;
-    }
+    },
+    editor() {
+      // get current editor object
+      return this.$refs.codemirror.editor
+    }    
   },
   watch: {
     input() {
@@ -213,8 +217,12 @@ export default {
       menu.newFile = this.menuNewFile;
       menu.saveFile = this.menuSaveFile;
       menu.saveAsFile = this.menuSaveAs;
+      menu.insert = (code)=>{
+        this.editor.replaceSelection(code)
+      }
       menu.ready(this.$electron);
     }
+
   },
   components: {
     MarkdownBlock,
