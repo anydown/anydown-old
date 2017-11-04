@@ -1,6 +1,6 @@
-const util = require("./gantt-util")
+import * as util from "./gantt-util"
 
-function compile(input){
+export function compile(input){
   let data = input.split("\n").filter(item => item.length > 0);
   //最初の一行を除去
   data.shift();
@@ -28,13 +28,8 @@ function ymdFromEpoc(epoc, offset){
   return ymd(d)
 }
 
-function serialize(tasks){
+export function serialize(tasks){
   return "gantt\n" + tasks.map((item)=>{
     return `${item.name} ${ymdFromEpoc(item.start)} ${ymdFromEpoc(item.end, -1)}`
   }).join("\n") + "\n"
-}
-
-module.exports = {
-  compile: compile,
-  serialize: serialize
 }
