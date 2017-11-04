@@ -1,10 +1,11 @@
 import test from 'ava';
-import * as compiler from './src/renderer/kanban-compiler';
+import * as kanban from './src/renderer/kanban-compiler';
+import * as gantt from './src/renderer/gantt-compiler';
 
 
 test(t => {
 	const kanbanInput = "kanban\n# TODO\n* タスク\n# DONE\n* test1\n* test2\n* test3\n"
-	const kanbanCompiled = compiler.compileKanban(kanbanInput)
+	const kanbanCompiled = kanban.compileKanban(kanbanInput)
 	const expected = [
 		{ name: 'TODO', cards: ['タスク'] },
 		{ name: 'DONE', cards: ['test1', 'test2', 'test3'] }
@@ -18,7 +19,22 @@ test(t => {
 		{ name: 'TODO', cards: ['タスク'] },
 		{ name: 'DONE', cards: ['test1', 'test2', 'test3'] }
 	];
-	const kanbanSerialized = compiler.serializeKanban(kanbanData)
+	const kanbanSerialized = kanban.serializeKanban(kanbanData)
 	const kanbanSource = "kanban\n# TODO\n* タスク\n# DONE\n* test1\n* test2\n* test3\n"
 	t.deepEqual(kanbanSerialized, kanbanSource);
 });
+
+
+test(t => {
+	const input = "gantt\nTask1 2017-11-04 2017-11-07\nTask2 2017-11-05 2017-11-08\n"
+	const tasks = gantt.compile(input)
+	const expected = [
+		{ name: 'Task1', start: 1509721200000, end: 1509980400000 },
+		{ name: 'Task2', start: 1509807600000, end: 1510066800000 },
+	];
+	t.deepEqual(tasks, expected);
+});
+
+
+//Task1 2017-11-04 2017-11-07
+//Task2 2017-11-05 2017-11-08
