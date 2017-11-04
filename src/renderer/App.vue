@@ -50,7 +50,7 @@ export default {
         lineNumbers: true,
         theme: "monokai",
         lineWrapping: true,
-        dragDrop: false, //to prevent file drop insert
+        dragDrop: false //to prevent file drop insert
       }
     };
   },
@@ -58,13 +58,13 @@ export default {
     compiledMarkdown() {
       return md.render(this.input);
     },
-    isDirty(){
-      return this.input !== this.originalInput
+    isDirty() {
+      return this.input !== this.originalInput;
     }
   },
   watch: {
     input() {
-      this.checkDirty()
+      this.checkDirty();
       localStorage.setItem(LOCALSTORAGE_KEY, this.input);
       this.splited = this.input.split("```").map((block, index) => {
         //必ず奇数indexがcode blockになる
@@ -86,8 +86,8 @@ export default {
     }
   },
   methods: {
-    checkDirty(){
-      const dirty = this.isDirty ? " *" : ""
+    checkDirty() {
+      const dirty = this.isDirty ? " *" : "";
       document.title = "anydown - " + this.path + dirty;
     },
     updateBlock(a, b) {
@@ -99,7 +99,7 @@ export default {
         this.input = example;
       }
     },
-    readFile(path) {
+    readFile(path, cb) {
       var electronFs = this.$electron.remote.require("fs");
       electronFs.readFile(path, "utf8", (err, text) => {
         if (err && err.code === "ENOENT") {
@@ -113,14 +113,15 @@ export default {
         }
         if (!err) {
           this.input = text;
-          this.resetDirtyFlag()
+          this.resetDirtyFlag();
           this.setPath(path);
         }
+        cb();
       });
     },
-    resetDirtyFlag(){
-        this.originalInput = this.input
-        this.checkDirty()
+    resetDirtyFlag() {
+      this.originalInput = this.input;
+      this.checkDirty();
     },
     writeFile(path, text) {
       var electronFs = this.$electron.remote.require("fs");
@@ -128,7 +129,7 @@ export default {
         if (err) {
           alert(err);
         }
-        this.resetDirtyFlag()
+        this.resetDirtyFlag();
       });
     },
     newFile() {
@@ -140,7 +141,7 @@ export default {
     setPath(path) {
       this.path = path;
       localStorage.setItem(LOCALSTORAGE_LAST_EDITED_FILE, path);
-      const dirty = this.isDirty ? " *" : ""
+      const dirty = this.isDirty ? " *" : "";
       if (this.path === "") {
         document.title = "anydown - untitled";
       } else {
@@ -183,24 +184,28 @@ export default {
         }
       );
     },
-    ondrop(e){
-      if(e.dataTransfer.files[0]){
-        this.readFile(e.dataTransfer.files[0].path)
+    ondrop(e) {
+      if (e.dataTransfer.files[0]) {
+        this.readFile(e.dataTransfer.files[0].path);
       }
-    },
+    }
   },
   mounted() {
-    /*
-    const storage = localStorage.getItem(LOCALSTORAGE_KEY);
-    if (storage) {
-      this.input = storage;
-    } else {
-      this.input = example;
-    }
-    */
     const lastEditedFile = localStorage.getItem(LOCALSTORAGE_LAST_EDITED_FILE);
     if (lastEditedFile) {
-      this.readFile(lastEditedFile);
+      this.readFile(lastEditedFile, () => {
+        const storage = localStorage.getItem(LOCALSTORAGE_KEY);
+        if (storage) {
+          this.input = storage;
+        }
+      });
+    } else {
+      const storage = localStorage.getItem(LOCALSTORAGE_KEY);
+      if (storage) {
+        this.input = storage;
+      } else {
+        this.input = example;
+      }
     }
 
     if (this.$electron) {
@@ -302,22 +307,22 @@ code {
   }
 }
 
-.app{
+.app {
   height: 100%;
 }
 
-.droppable{
+.droppable {
   background: black;
   opacity: 0;
   position: fixed;
-  top:0;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   user-select: none;
   z-index: -100;
 }
-.droppable.dropover{
+.droppable.dropover {
   opacity: 0.5;
   z-index: 1000;
 }
