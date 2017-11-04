@@ -1,9 +1,11 @@
 <template>
-  <svg :width="svgWidth" :height="tasks.length * 32 + 32">
+  <svg :width="svgWidth" :height="tasks.length * 32 + 48">
     <!-- 全体を32px下げる（日付用余白） -->
-    <g transform="translate(0, 32)">
+    <g transform="translate(0, 48)">
       <!-- 背景 -->
       <rect class="background" x="0" y="0" :width="svgWidth" :height="tasks.length * 32"></rect>
+      <!-- 月 -->
+      <text v-for="(line, index) in lines" :x="line.x" y="-28" text-anchor="start" font-weight="900" font-size="0.8rem" fill="#9C9" :key="index">{{line.labelMonth}}</text>
       <!-- 日付 -->
       <text v-for="(line, index) in lines" :x="line.x + 12" y="-8" text-anchor="middle" font-size="0.8rem" :fill="line.color" :key="index">{{line.label}}</text>
       <!-- 日付区切り線 -->
@@ -63,6 +65,7 @@
         const start = this.timeRange[0];
         const end = this.timeRange[1];
         const len = end - start;
+        let month = -1;
         for (let i = 0; i < this.displayRangeLength; i++) {
           const reldate = getRelativeDate(this.displayRange.start + i)
           const t = (reldate.getTime() - start) / len * this.svgWidth;
@@ -73,7 +76,13 @@
           if (reldate.getDay() === 6) {
             color = "#8888FF";
           }
-          lines.push({ x: Math.round(t), label: reldate.getDate(), color: color })
+          let monthStr = ""
+          if(month != reldate.getMonth()+1){
+            month = reldate.getMonth()+1
+            monthStr = reldate.getMonth()+1 + "月"
+          }
+
+          lines.push({ x: Math.round(t), label: reldate.getDate(), color: color, labelMonth: monthStr})
         }
         this.lines = lines;
       }
