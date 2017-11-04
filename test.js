@@ -35,6 +35,12 @@ test(t => {
 	t.deepEqual(tasks, expected);
 });
 
-
-//Task1 2017-11-04 2017-11-07
-//Task2 2017-11-05 2017-11-08
+test(t => {
+	const tasks = [
+		{ name: 'Task1', start: 1509721200000, end: 1509980400000 },
+		{ name: 'Task2', start: 1509807600000, end: 1510066800000 },
+	];
+	const str = gantt.serialize(tasks)
+	const expected = "gantt\nTask1 2017-11-04 2017-11-07\nTask2 2017-11-05 2017-11-08\n"
+	t.deepEqual(str, expected)
+})

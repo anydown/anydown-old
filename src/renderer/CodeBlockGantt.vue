@@ -84,9 +84,14 @@
             this.tasks.splice(this.dragoverIndex, 0, task[0])
           }
         }
+        if(this.dragging !== "none"){
+          this.$emit("change", gantt.serialize(this.tasks));          
+        }
+
         this.dragging = "none"
         this.selectedIndex = -1;
         this.dragoverIndex = -1;
+        
       },
       scaleLength(epocdiff) {
         return epocdiff / (24 * 60 * 60 * 1000) * this.svgWidth / this.displayRangeLength

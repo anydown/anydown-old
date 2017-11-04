@@ -14,8 +14,20 @@ function compile(input){
   })
 }
 
-function serialize(){
+function zeropad(str) {
+  return ("00" + str).slice(-2)
+}
+function ymd(d){
+  return `${d.getFullYear()}-${zeropad(d.getMonth() + 1)}-${zeropad(d.getDate())}`
+}
+function ymdFromEpoc(epoc){
+  return ymd(new Date(epoc))
+}
 
+function serialize(tasks){
+  return "gantt\n" + tasks.map((item)=>{
+    return `${item.name} ${ymdFromEpoc(item.start)} ${ymdFromEpoc(item.end)}`
+  }).join("\n") + "\n"
 }
 
 module.exports = {
