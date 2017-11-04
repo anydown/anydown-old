@@ -41,6 +41,7 @@ export default {
   data() {
     return {
       input: "",
+      originalInput: "",
       splited: [],
       path: "",
       codeMirrorOption: {
@@ -56,10 +57,14 @@ export default {
   computed: {
     compiledMarkdown() {
       return md.render(this.input);
+    },
+    isDirty(){
+      return this.input !== this.originalInput
     }
   },
   watch: {
     input() {
+      this.checkDirty()
       localStorage.setItem(LOCALSTORAGE_KEY, this.input);
       this.splited = this.input.split("```").map((block, index) => {
         //必ず奇数indexがcode blockになる
@@ -81,6 +86,10 @@ export default {
     }
   },
   methods: {
+    checkDirty(){
+      const dirty = this.isDirty ? " *" : ""
+      document.title = "anydown - " + this.path + dirty;
+    },
     updateBlock(a, b) {
       this.splited[b].text = a;
       this.input = this.splited.map(i => i.text).join("```");
@@ -104,9 +113,14 @@ export default {
         }
         if (!err) {
           this.input = text;
+          this.resetDirtyFlag()
           this.setPath(path);
         }
       });
+    },
+    resetDirtyFlag(){
+        this.originalInput = this.input
+        this.checkDirty()
     },
     writeFile(path, text) {
       var electronFs = this.$electron.remote.require("fs");
@@ -114,6 +128,7 @@ export default {
         if (err) {
           alert(err);
         }
+        this.resetDirtyFlag()
       });
     },
     newFile() {
@@ -125,10 +140,11 @@ export default {
     setPath(path) {
       this.path = path;
       localStorage.setItem(LOCALSTORAGE_LAST_EDITED_FILE, path);
+      const dirty = this.isDirty ? " *" : ""
       if (this.path === "") {
         document.title = "anydown - untitled";
       } else {
-        document.title = "anydown - " + path;
+        document.title = "anydown - " + path + dirty;
       }
     },
     menuSaveFile() {
