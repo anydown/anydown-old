@@ -1,4 +1,4 @@
-function compileKanban(input) {
+export function compileKanban(input) {
   var lines = input.split(/[\r|\n|\r\n]/);
   var output = [];
   var cards = [];
@@ -17,7 +17,7 @@ function compileKanban(input) {
   return output
 }
 
-function serializeKanban(data){
+export function serializeKanban(data){
   return "kanban\n"+ data.map((item)=>{
     return `# ${item.name}\n` + item.cards.map((card)=>{
       return "* "+card
@@ -25,7 +25,3 @@ function serializeKanban(data){
   }).join("\n") + "\n"
 }
 
-module.exports = {
-  compileKanban: compileKanban,
-  serializeKanban: serializeKanban
-}
