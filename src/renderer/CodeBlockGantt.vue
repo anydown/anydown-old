@@ -1,5 +1,5 @@
 <template>
-  <svg :width="svgWidth" :height="tasks.length * 32 + 48">
+  <svg class="gantt" :width="svgWidth" :height="tasks.length * 32 + 48" @pointermove="onDrag" @pointerup="stopDrag">
     <!-- 全体を32px下げる（日付用余白） -->
     <g transform="translate(0, 48)">
       <!-- 背景 -->
@@ -11,9 +11,9 @@
       <!-- 日付区切り線 -->
       <line v-for="(line, index) in lines" :x1="line.x" y1="0" :x2="line.x" :y2="tasks.length * 32" class="gridline" :key="index" />
       <!-- タスク -->
-      <g v-for="(task, index) in tasks" :transform="`translate(${scale(task.start)}, ${index * 32})`" :key="index" >
-        <rect class="task" x="0" y="4" :width="scaleLength(task.end - task.start)" height="24"></rect>
-        <text x="-4" y="20" font-size="12" text-anchor="end" fill="black" line-height="32">{{task.name}}</text>
+      <g v-for="(task, index) in tasks" :transform="`translate(${scale(task.start)}, ${index * 32})`" :key="index" :class="{'dragging': index === selectedIndex}">
+        <rect class="task" x="0" y="4" :width="scaleLength(task.end - task.start)" height="24" @pointerdown="startDrag($event, index)"></rect>
+        <text class="taskname" x="-4" y="20" font-size="12" text-anchor="end" fill="black" line-height="32">{{task.name}}</text>
       </g>
     </g>
   </svg>
@@ -25,6 +25,12 @@
     d.setSeconds(0);
     d.setMilliseconds(0)
     return d;
+  }
+  function resetHMSfromEpoc(epoc){
+    return resetHMS(new Date(epoc)).getTime()
+  }
+  function roundHMSfromEpoc(epoc){
+    return resetHMS(new Date(epoc + 24 * 60 * 60 * 1000 / 2)).getTime()
   }
   function getRelativeDate(day) {
     let d = new Date();
@@ -45,20 +51,60 @@
     },
     data() {
       return {
+        tasks: [],
         lines: [],
         displayRange: {
           start: -2,
           end: 24
         },
-        svgWidth: 600
+        svgWidth: 600,
+        selectedIndex: -1,
+        dragOffset: {
+          x: 0,
+          y: 0
+        },
+        dragging: ""
       }
     },
     methods: {
+      onDrag(e) {
+        if (this.dragging === "move") {
+          const len = this.selectedItem.end - this.selectedItem.start
+          //差分値を基点に反映
+          this.selectedItem.start = this.invert(e.offsetX - this.dragOffset.x)
+          this.selectedItem.end = this.selectedItem.start + len
+        }
+        if(this.dragging === "resize-x"){
+          this.selectedItem.end = this.invert(e.offsetX)
+        }
+      },
+      startDrag(e, index) {
+        this.dragging = "move"
+        this.selectedIndex = index
+        //ページ左上とオブジェクト左上の差分から、ドラッグ開始位置（オブジェクト相対座標）を取得
+        this.dragOffset.x = e.offsetX - this.scale(this.selectedItem.start)
+
+        const len = this.selectedItem.end - this.selectedItem.start
+        if (e.offsetX > this.scale(this.selectedItem.end) - 10) {
+          this.dragging = "resize-x"
+        }
+      },      
+      stopDrag() {
+        if (this.dragging !== "none") {
+          this.dragging = "none"
+          this.selectedItem.start = roundHMSfromEpoc(this.selectedItem.start)
+          this.selectedItem.end = roundHMSfromEpoc(this.selectedItem.end)
+          this.selectedIndex = -1;
+        }
+      },
       scaleLength(epocdiff) {
         return epocdiff / (24 * 60 * 60 * 1000) * this.svgWidth / this.displayRangeLength
       },
       scale(epoc) {
         return scale.scaleLinear().domain(this.timeRange).range([0, this.svgWidth])(epoc)
+      },
+      invert(x) {
+        return scale.scaleLinear().domain(this.timeRange).range([0, this.svgWidth]).invert(x)
       },
       generateLine() {
         let lines = []
@@ -85,23 +131,12 @@
           lines.push({ x: Math.round(t), label: reldate.getDate(), color: color, labelMonth: monthStr})
         }
         this.lines = lines;
-      }
-    },
-    computed: {
-      timeRange() {
-        return [
-          getRelativeDate(this.displayRange.start).getTime(),
-          getRelativeDate(this.displayRange.end).getTime()
-        ]
       },
-      displayRangeLength() {
-        return (this.displayRange.end - this.displayRange.start);
-      },
-      tasks() {
+      setTasks(){
         let data = this.input.split("\n").filter(item => item.length > 0);
         //最初の一行を除去
         data.shift();
-        return data.map((item) => {
+        this.tasks = data.map((item) => {
           const ary = item.split(" ");
           return {
             name: ary[0],
@@ -111,14 +146,30 @@
         })
       }
     },
+    computed: {
+      selectedItem(){
+        return this.tasks[this.selectedIndex]
+      },
+      timeRange() {
+        return [
+          getRelativeDate(this.displayRange.start).getTime(),
+          getRelativeDate(this.displayRange.end).getTime()
+        ]
+      },
+      displayRangeLength() {
+        return (this.displayRange.end - this.displayRange.start);
+      }
+    },
     mounted() {
       this.generateLine();
+      this.setTasks()
     }
   }
 </script>
 <style>
   .task {
     fill: rgb(144, 144, 255);
+    cursor: pointer;
   }
 
   .background {
@@ -128,5 +179,14 @@
   .gridline {
     stroke: rgb(253, 253, 253);
     stroke-width: 2
+  }
+  svg.gantt{
+    user-select: none;
+  }
+  .taskname{
+    cursor: default;
+  }
+  .dragging{
+    opacity: 0.5;
   }
 </style>
