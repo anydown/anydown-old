@@ -16,18 +16,21 @@
 </template>
 
 <script>
-import MarkdownBlock from "./MarkdownBlock.vue";
-import CodeBlockKanban from "./CodeBlockKanban.vue";
-import CodeBlockGantt from "./CodeBlockGantt.vue";
+import MarkdownBlock from "./components/MarkdownBlock.vue";
+import CodeBlockKanban from "./components/CodeBlockKanban.vue";
+import CodeBlockGantt from "./components/CodeBlockGantt.vue";
+import { example } from "./util/example.js";
+import menu from "./util/menu";
+
 import { codemirror } from "vue-codemirror-lite";
-import { example } from "./example.js";
-import menu from "./menu";
-const LOCALSTORAGE_KEY = "anydown_data";
-const LOCALSTORAGE_LAST_EDITED_FILE = "anydown_last_edited_file";
+import VueSplitPane from "vue-splitpane";
+
 import "codemirror/mode/markdown/markdown";
 import "codemirror/addon/edit/continuelist.js";
 import "codemirror/theme/monokai.css";
-import VueSplitPane from "vue-splitpane";
+
+const LOCALSTORAGE_KEY = "anydown_data";
+const LOCALSTORAGE_LAST_EDITED_FILE = "anydown_last_edited_file";
 
 const filters = [
   {
@@ -63,8 +66,8 @@ export default {
     },
     editor() {
       // get current editor object
-      return this.$refs.codemirror.editor
-    }    
+      return this.$refs.codemirror.editor;
+    }
   },
   watch: {
     input() {
@@ -217,12 +220,11 @@ export default {
       menu.newFile = this.menuNewFile;
       menu.saveFile = this.menuSaveFile;
       menu.saveAsFile = this.menuSaveAs;
-      menu.insert = (code)=>{
-        this.editor.replaceSelection(code)
-      }
+      menu.insert = code => {
+        this.editor.replaceSelection(code);
+      };
       menu.ready(this.$electron);
     }
-
   },
   components: {
     MarkdownBlock,
