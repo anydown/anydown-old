@@ -20,30 +20,9 @@
   </svg>
 </template>
 <script>
-  function resetHMS(d) {
-    d.setHours(0);
-    d.setMinutes(0)
-    d.setSeconds(0);
-    d.setMilliseconds(0)
-    return d;
-  }
-  function resetHMSfromEpoc(epoc){
-    return resetHMS(new Date(epoc)).getTime()
-  }
-  function roundHMSfromEpoc(epoc){
-    return resetHMS(new Date(epoc + 24 * 60 * 60 * 1000 / 2)).getTime()
-  }
-  function getRelativeDate(day) {
-    let d = new Date();
-    resetHMS(d)
-    d.setDate(d.getDate() + day)
-    return d
-  }
-  function getNewDate(str) {
-    let d = new Date(str);
-    resetHMS(d)
-    return d;
-  }
+  import * as gantt from "./gantt-compiler"
+  import * as util from "./gantt-util.js"
+
   var scale = require("d3-scale")
 
   export default {
@@ -96,8 +75,8 @@
       },      
       stopDrag() {
         if (this.dragging !== "none") {
-          this.selectedItem.start = roundHMSfromEpoc(this.selectedItem.start)
-          this.selectedItem.end = roundHMSfromEpoc(this.selectedItem.end)
+          this.selectedItem.start = util.roundHMSfromEpoc(this.selectedItem.start)
+          this.selectedItem.end = util.roundHMSfromEpoc(this.selectedItem.end)
         }
         if (this.dragging === "move") {
           if(this.selectedIndex !== this.dragoverIndex){
@@ -125,7 +104,7 @@
         const len = end - start;
         let month = -1;
         for (let i = 0; i < this.displayRangeLength; i++) {
-          const reldate = getRelativeDate(this.displayRange.start + i)
+          const reldate = util.getRelativeDate(this.displayRange.start + i)
           const t = (reldate.getTime() - start) / len * this.svgWidth;
           let color = "#888888";
           if (reldate.getDay() === 0) {
@@ -144,18 +123,13 @@
         }
         this.lines = lines;
       },
-      setTasks(){
-        let data = this.input.split("\n").filter(item => item.length > 0);
-        //最初の一行を除去
-        data.shift();
-        this.tasks = data.map((item) => {
-          const ary = item.split(" ");
-          return {
-            name: ary[0],
-            start: getNewDate(ary[1]).getTime(),
-            end: getNewDate(ary[2]).getTime()
-          }
-        })
+      setTasks(input){
+        this.tasks = gantt.compile(input)
+      },
+    },
+    watch: {
+      input(){
+        this.setTasks(this.input)
       }
     },
     computed: {
@@ -164,8 +138,8 @@
       },
       timeRange() {
         return [
-          getRelativeDate(this.displayRange.start).getTime(),
-          getRelativeDate(this.displayRange.end).getTime()
+          util.getRelativeDate(this.displayRange.start).getTime(),
+          util.getRelativeDate(this.displayRange.end).getTime()
         ]
       },
       displayRangeLength() {
@@ -174,7 +148,7 @@
     },
     mounted() {
       this.generateLine();
-      this.setTasks()
+      this.setTasks(this.input)
     }
   }
 </script>
