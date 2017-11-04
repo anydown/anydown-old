@@ -24,8 +24,8 @@ import { example } from "./example.js";
 import menu from "./menu";
 const LOCALSTORAGE_KEY = "anydown_data";
 const LOCALSTORAGE_LAST_EDITED_FILE = "anydown_last_edited_file";
-require("codemirror/mode/markdown/markdown");
-require("codemirror/addon/edit/continuelist.js");
+import "codemirror/mode/markdown/markdown";
+import "codemirror/addon/edit/continuelist.js";
 import "codemirror/theme/monokai.css";
 import VueSplitPane from "vue-splitpane";
 

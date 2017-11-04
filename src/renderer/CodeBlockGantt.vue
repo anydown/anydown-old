@@ -22,8 +22,7 @@
 <script>
   import * as gantt from "./gantt-compiler"
   import * as util from "./gantt-util.js"
-
-  var scale = require("d3-scale")
+  import * as scale from "d3-scale"
 
   export default {
     props: {
