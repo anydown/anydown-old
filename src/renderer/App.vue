@@ -204,6 +204,9 @@ export default {
       menu.newFile = this.menuNewFile;
       menu.saveFile = this.menuSaveFile;
       menu.saveAsFile = this.menuSaveAs;
+      menu.print = ()=>{
+        window.printToPdf();
+      }
       menu.insert = code => {
         this.editor.replaceSelection(code);
       };
@@ -298,6 +301,18 @@ code {
   }
   .output__header {
     display: none;
+  }
+  .CodeMirror{
+    display: none;
+  }
+  .splitter-paneL {
+    display: none;
+  }
+  .Resizer.vertical{
+    display: none;
+  }
+  .splitter-paneR {
+      width: 100% !important;
   }
 }
 

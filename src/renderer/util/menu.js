@@ -74,6 +74,34 @@ export default {
             self.saveAsFile()
           }
         },
+        {
+          label: "PDF出力",
+          click() {
+            const filters = [
+              {
+                name: "PDF Document",
+                extensions: ["pdf"]
+              }
+            ];
+            const remote = $electron.remote;
+            const focusedWindow = remote.BrowserWindow.getFocusedWindow();
+            const savePath = remote.dialog.showSaveDialog(focusedWindow, {
+              title: "保存",
+              filters: filters
+            });
+            if (savePath) {
+              $electron.remote.getCurrentWebContents().printToPDF({
+                printBackground: true
+              }, (error, data) => {
+                if (error) throw error
+                $electron.remote.require("fs").writeFile(savePath, data, (error) => {
+                  if (error) throw error
+                  console.log('Write PDF successfully.')
+                })
+              })
+            }
+          }
+        },
       ],
     }, {
         label: "挿入",
