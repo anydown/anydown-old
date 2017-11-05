@@ -1,7 +1,7 @@
 import * as util from "./gantt-util"
 
 export function compile(input){
-  let data = input.split("\n").filter(item => item.length > 0);
+  let data = input.split(/[\r|\n|\r\n]/).filter(item => item.length > 0);
   //最初の一行を除去
   data.shift();
   return data.map((item) => {
