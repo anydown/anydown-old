@@ -54,7 +54,7 @@
     }
   },
   "dependencies": {
-    "ava": "^0.22.0",
+    "ava": "^0.24.0",
     "d3-scale": "^1.0.6",
     "gh-pages": "^1.0.0",
     "markdown-it": "^8.4.0",
@@ -91,8 +91,8 @@
     "markdown-it-emoji": "^1.4.0",
     "multispinner": "^0.2.1",
     "node-loader": "^0.6.0",
-    "style-loader": "^0.18.2",
-    "url-loader": "^0.5.9",
+    "style-loader": "^0.19.0",
+    "url-loader": "^0.6.2",
     "vue-codemirror-lite": "^1.0.2",
     "vue-html-loader": "^1.2.4",
     "vue-loader": "^13.0.5",
