@@ -1,5 +1,7 @@
 # anydown
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/anydown/anydown.svg)](https://greenkeeper.io/)
+
 - Markdownで書けるメモ帳
 - スケジュール機能が充実している
   - カンバンやガントチャートを埋め込んで編集できる
